@@ -37,7 +37,7 @@ with tab3:
 
     st.write("Explore the dataset of global development indicators:")
     
-
+    # Display Dataset 
     st.dataframe(data)
 
     # Create multiselectbox to select the country names
