@@ -146,13 +146,23 @@ with tab1:
         from sklearn.metrics import mean_squared_error
 
         features = ['GDP per capita', 'headcount_ratio_upper_mid_income_povline', 'year']
-        X_test = data[features]
-        y_test = data["Healthy Life Expectancy (IHME)"]
-        y_pred = model.predict(X_test)
+        if model is not None:
+            try:
+                # التحقق من وجود بيانات قبل التنبؤ
+                X_test = data[features].copy()
 
-        mse = mean_squared_error(y_test, y_pred)
+                if X_test.empty:
+                    st.error("❌ No data available for prediction.")
+                else:
+                    y_pred = model.predict(X_test)
 
-        st.metric(label="Model Performance", value=f"{mse:.2f}")
+                    from sklearn.metrics import mean_squared_error
+                    mse = mean_squared_error(data["Healthy Life Expectancy (IHME)"], y_pred)
+                    st.metric(label="📉 Mean Model Squared Error", value=f"{mse:.2f}")
+            except Exception as e:
+                st.error(f"❌ Prediction failed: {e}")
+        else:
+            st.error("❌ Model could not be loaded. Please check if model.pkl exists.")
 
         # Show the importance of the Features
         # st.write("### Feature Importance")
