@@ -24,7 +24,7 @@ def scatter_plot(data):
 
     fig.update_layout(
     autosize=True,
-    margin=dict(l=100, r=100, t=100, b=100),  
+    margin=dict(l=100, r=100, t=0, b=100),  
     width=900,  
     height=600,  
 )
