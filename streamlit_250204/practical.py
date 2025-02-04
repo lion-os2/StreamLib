@@ -19,9 +19,19 @@ st.subheader(
 tab1, tab2, tab3 = st.tabs(["Global Overview", "Country Deep Dive", "Data Explorer"])
 
 # Download Data 
-@st.cache_data
 def load_data():
-    return pd.read_csv("global_development_data.csv")
+    file_path = "global_development_data.csv"
+    
+    try:
+        # محاولة تحميل البيانات من الملف المحلي
+        data = pd.read_csv(file_path)
+    except FileNotFoundError:
+        st.warning("⚠ Local file not found, loading from GitHub...")
+        # تحميل البيانات من GitHub
+        file_url = "https://raw.githubusercontent.com/lion-os2/StreamLib/main/global_development_data.csv"
+        data = pd.read_csv(file_url)
+    
+    return data
 
 data = load_data()
 
