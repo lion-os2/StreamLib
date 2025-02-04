@@ -1,6 +1,7 @@
 import streamlit as st
 import pandas as pd
-
+import plotly.express as px
+from plots import scatter_plot 
 # Page Layaut 
 st.set_page_config(layout="wide")
 
@@ -23,11 +24,11 @@ def load_data():
     file_path = "global_development_data.csv"
     
     try:
-        # محاولة تحميل البيانات من الملف المحلي
+        # Try locally to laid the CSV File 
         data = pd.read_csv(file_path)
     except FileNotFoundError:
         st.warning("⚠ Local file not found, loading from GitHub...")
-        # تحميل البيانات من GitHub
+        # Load data from GitHub
         file_url = "https://raw.githubusercontent.com/lion-os2/StreamLib/main/global_development_data.csv"
         data = pd.read_csv(file_url)
     
@@ -39,7 +40,7 @@ with tab1:
     st.write("### :earth_americas: Global Overview")
     st.write("This section provides a global perspective on quality of life indicators.")
 
-    selected_year = st.slider("Select Year", int(data["year"].min()), int(data["year"].max()), int(data["year"].median()))
+    selected_year = st.slider("Select Year", int(data["year"].min()), int(data["year"].max()))
 
     # Filtering data by Year
     year_data = data[data["year"] == selected_year]
@@ -47,7 +48,10 @@ with tab1:
     # Calculating 
     mean_life_expectancy = year_data["Healthy Life Expectancy (IHME)"].mean()
     median_gdp_per_capita = year_data["GDP per capita"].median()
-    mean_poverty_ratio = year_data["headcount_ratio_upper_mid_income_povline"].mean()
+    if year_data["headcount_ratio_upper_mid_income_povline"].max() > 1:
+        mean_poverty_ratio = year_data["headcount_ratio_upper_mid_income_povline"].mean() / 100
+    else:
+        mean_poverty_ratio = year_data["headcount_ratio_upper_mid_income_povline"].mean()
     num_countries = year_data["country"].nunique()
 
     # Displaying Data
@@ -60,10 +64,19 @@ with tab1:
         st.metric(label="💰 Median GDP per Capita", value=f"${median_gdp_per_capita:,.2f}")
 
     with col3:
-        st.metric(label="📊 Mean Poverty Ratio", value=f"{mean_poverty_ratio:.2%}")
+        st.metric(label="📊 Mean Poverty Ratio", value=f"{mean_poverty_ratio:.2%}")  # تحويل إلى نسبة مئوية
 
     with col4:
         st.metric(label="🌍 Number of Countries", value=num_countries)
+
+    # Create the Figure and display it
+    st.write("\n\n\n")
+    st.write("\n\n\n")
+
+    st.write("\n\n\n### 📉 GDP per Capita vs Life Expectancy")
+    fig = scatter_plot(year_data)  
+    st.plotly_chart(fig, use_container_width=True)
+
 
 with tab2:
     st.write("### :bar_chart: Country Deep Dive")
