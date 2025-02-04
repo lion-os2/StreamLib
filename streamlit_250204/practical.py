@@ -38,6 +38,33 @@ data = load_data()
 with tab1:
     st.write("### :earth_americas: Global Overview")
     st.write("This section provides a global perspective on quality of life indicators.")
+
+    selected_year = st.slider("Select Year", int(data["year"].min()), int(data["year"].max()), int(data["year"].median()))
+
+    # Filtering data by Year
+    year_data = data[data["year"] == selected_year]
+
+    # Calculating 
+    mean_life_expectancy = year_data["Healthy Life Expectancy (IHME)"].mean()
+    median_gdp_per_capita = year_data["GDP per capita"].median()
+    mean_poverty_ratio = year_data["headcount_ratio_upper_mid_income_povline"].mean()
+    num_countries = year_data["country"].nunique()
+
+    # Displaying Data
+    col1, col2, col3, col4 = st.columns(4)
+
+    with col1:
+        st.metric(label="📈 Mean Life Expectancy", value=f"{mean_life_expectancy:.2f} years")
+
+    with col2:
+        st.metric(label="💰 Median GDP per Capita", value=f"${median_gdp_per_capita:,.2f}")
+
+    with col3:
+        st.metric(label="📊 Mean Poverty Ratio", value=f"{mean_poverty_ratio:.2%}")
+
+    with col4:
+        st.metric(label="🌍 Number of Countries", value=num_countries)
+
 with tab2:
     st.write("### :bar_chart: Country Deep Dive")
     st.write("Analyze specific countries in detail.")
