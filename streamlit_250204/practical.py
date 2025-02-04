@@ -4,6 +4,9 @@ import pickle
 import numpy as np
 import plotly.express as px
 from plots import scatter_plot
+import os
+import urllib.request
+
 
 # Page Layout 
 st.set_page_config(layout="wide")
@@ -21,9 +24,23 @@ st.subheader(
 # Load The model
 @st.cache_resource
 def load_model():
-    with open("model.pkl", "rb") as f:
+    model_path = "model.pkl"
+
+    # إذا لم يكن الملف موجودًا محليًا، قم بتحميله من GitHub
+    if not os.path.exists(model_path):
+        st.warning("⚠ Model file not found locally. Downloading from GitHub...")
+        github_url = "https://raw.githubusercontent.com/lion-os2/StreamLib/main/model.pkl"
+        try:
+            urllib.request.urlretrieve(github_url, model_path)
+            st.success("✅ Model downloaded successfully!")
+        except Exception as e:
+            st.error(f"❌ Failed to download model: {e}")
+            return None
+    with open(model_path, "rb") as f:
         model = pickle.load(f)
+
     return model
+
 
 model = load_model()
 

@@ -6,3 +6,5 @@ plotly
 matplotlib
 seaborn
 requests
+os
+urllib
